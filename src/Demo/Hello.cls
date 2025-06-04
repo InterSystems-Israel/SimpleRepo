@@ -1,4 +1,4 @@
-Class Package.Hello Extends %RegisteredObject
+Class Demo.Hello Extends %RegisteredObject
 {
 
 ClassMethod SayHi()
