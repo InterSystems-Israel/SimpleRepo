@@ -1,12 +1,12 @@
 # @format
 
-name: Sync Repos
+name: Sync Repos (src/ only)
 
 on:
   push:
     branches:
       - main
-  # You can add more triggers, such as scheduled events
+  # Optional: scheduled sync
   # schedule:
   #   - cron: '0 0 * * *'
 
@@ -18,17 +18,22 @@ jobs:
       - name: Checkout source repository
         uses: actions/checkout@v2
 
-      - name: Push to Deploy repository
+      - name: Sync `src/` to Deploy repo
         run: |
           git config --global user.email "ari.glikman@intersystems.com"
           git config --global user.name "InterSystems-Israel"
-          git clone https://${{ env.ORG_NAME }}:${{ secrets.PAT }}@github.com/${{ env.ORG_NAME }}/Deploy.git
+
+          # Clone the Deploy repo
+          git clone https://${ORG_NAME}:${PAT}@github.com/${ORG_NAME}/Deploy.git
+
+          # Copy only the `src` directory
+          cp -r src Deploy/src
+
           cd Deploy
-          git remote add ${{ env.ORIGINAL_REPO_NAME }} https://${{ env.ORG_NAME }}:${{ secrets.PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.ORIGINAL_REPO_NAME }}.git
-          git remote update
-          git merge ${{ env.ORIGINAL_REPO_NAME }}/main
+          git add src
+          git commit -m "[ci skip] Sync src from ${REPO_NAME}" || echo "No changes to commit"
           git push origin main
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          ORIGINAL_REPO_NAME: ${{ github.event.repository.name }}
-          ORG_NAME: InterSystems-Israel
+          PAT: ${{ secrets.PAT }}
+          ORG_NAME: ariglikman         # <-- replace with your GitHub username
+          REPO_NAME: ${{ github.event.repository.name }}
