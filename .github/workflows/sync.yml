@@ -5,8 +5,9 @@ name: Sync Repos (src/ only)
 on:
   push:
     branches:
-      - main
-  # Optional: scheduled sync
+      - DEV
+      - PROD
+  # Optional: schedule per branch if needed
   # schedule:
   #   - cron: '0 0 * * *'
 
@@ -17,24 +18,27 @@ jobs:
     steps:
       - name: Checkout source repository
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Sync `src/` to Deploy repo
         run: |
           git config --global user.email "ari.glikman@intersystems.com"
           git config --global user.name "InterSystems-Israel"
 
-          # Clone the Deploy repo
-          git clone https://${ORG_NAME}:${PAT}@github.com/${ORG_NAME}/Deploy.git
+          # Clone the Deploy repo and switch to the matching branch (DEV or PROD)
+          git clone --branch ${BRANCH_NAME} https://${ORG_NAME}:${PAT}@github.com/${ORG_NAME}/Deploy.git
 
-          # Replace Deploy/src with latest src directory from source repo
+          # Replace Deploy/src with the latest src from source repo
           rm -rf Deploy/src
           cp -r src Deploy/
 
           cd Deploy
           git add src
-          git commit -m "[ci skip] Sync src from ${REPO_NAME}" || echo "No changes to commit"
-          git push origin main
+          git commit -m "[ci skip] Sync src from ${REPO_NAME} (${BRANCH_NAME})" || echo "No changes to commit"
+          git push origin ${BRANCH_NAME}
         env:
           PAT: ${{ secrets.PAT }}
-          ORG_NAME: InterSystems-Israel         # <-- Your actual GitHub username
+          ORG_NAME: InterSystems-Israel           # <-- Replace with your GitHub username
           REPO_NAME: ${{ github.event.repository.name }}
+          BRANCH_NAME: ${{ github.ref_name }}
