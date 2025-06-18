@@ -3,7 +3,7 @@ Class Demo.Hello
 
 ClassMethod SayHi()
 {
-        Write "Just saying Hi to DEV", !
+        Write "Just saying Hi TO DEV", !
 }
 
 }
