@@ -3,7 +3,7 @@ Class Demo.Hello
 
 ClassMethod SayHi()
 {
-        Write "Just saying Hi at 10:17", !
+        Write "Just saying Hi at 10:26", !
 }
 
 }
