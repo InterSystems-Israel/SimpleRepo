@@ -1,9 +1,11 @@
-Class Demo.Hello Extends %RegisteredObject
+Class Demo.Hello
 {
 
-ClassMethod SayHi()
+ClassMethod GetHebrewDate() As %String [ Language = python ]
 {
-        Write "Hello from IRIS! jjj This is TEST to Major Tom - June 4 16:07s jjjjjj", !
+        from pyluach import dates
+
+        print(dates.HebrewDate.today().hebrew_date_string())
 }
 
 }
