@@ -1,6 +1,6 @@
 # @format
 
-name: Sync Repos (src/ only)
+name: Sync Repos (cls/ only)
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Sync `src/` to Deploy repo
+      - name: Sync `cls/` to Deploy repo
         run: |
           git config --global user.email "ari.glikman@intersystems.com"
           git config --global user.name "InterSystems-Israel"
@@ -29,13 +29,13 @@ jobs:
           # Clone the Deploy repo and switch to the matching branch (DEV or PROD)
           git clone --branch ${BRANCH_NAME} https://${ORG_NAME}:${PAT}@github.com/${ORG_NAME}/Deploy.git
 
-          # Replace Deploy/src with the latest src from source repo
-          rm -rf Deploy/src
-          cp -r src Deploy/
+          # Replace Deploy/cls with the latest cls from source repo
+          rm -rf Deploy/cls
+          cp -r cls Deploy/
 
           cd Deploy
-          git add src
-          git commit -m "[ci skip] Sync src from ${REPO_NAME} (${BRANCH_NAME})" || echo "No changes to commit"
+          git add cls
+          git commit -m "[ci skip] Sync cls from ${REPO_NAME} (${BRANCH_NAME})" || echo "No changes to commit"
           git push origin ${BRANCH_NAME}
         env:
           PAT: ${{ secrets.PAT }}
