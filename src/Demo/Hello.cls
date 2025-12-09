@@ -1,9 +1,11 @@
 Class Demo.Hello
 {
 
-ClassMethod SayHi()
+ClassMethod GetHebrewDate() As %String [Language = python]
 {
-        Write "Just saying Hello test1234", !
+        from pyluach import dates
+
+        print(dates.HebrewDate.today().hebrew_date_string())
 }
 
 }
